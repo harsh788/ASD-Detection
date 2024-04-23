@@ -27,25 +27,31 @@ def upload():
         f = request.files['file']
         f.save(f.filename)
     
-        # file_path = "3.cpp"
-        bucket = storage.bucket() # storage bucket
-        blob = bucket.blob(f.filename) # creating a blob object
+        # Upload the video to Firebase Storage
+        bucket = storage.bucket()
+        blob = bucket.blob(f"videos/{f.filename}")
         blob.upload_from_string(
             f.stream.read(),
             content_type=f.content_type
         )
 
-        detect_and_save_faces_in_video(f.filename, 'output_faces')
+        # Detect faces in the video and save them as images
+        detect_and_save_faces_in_video(f.filename, 'static/output_faces/')
+        
+        # Load and preprocess the obtained facial images
         test_data, test_filenames = preprocess()
+
+        # Predict the ASD status of the images
         images = predict(test_data, test_filenames)
         print(images)
 
         # Saving the images to the firebase storage
         for image in images:
-            blob = bucket.blob(image)
-            blob.upload_from_filename(f"output_faces/{image}")
+            blob = bucket.blob(f"positive/{image}")
+            blob.upload_from_filename(f"static/output_faces/{image}")
 
-        return render_template('index.html', message='File uploaded successfully')
+        # Passing the images to frontend
+        return render_template('index.html', images=images)
 
 def detect_and_save_faces_in_video(video_path, output_dir):
     # Open the video file
@@ -89,7 +95,7 @@ def detect_and_save_faces_in_video(video_path, output_dir):
 def preprocess():
     test_data = []
     test_filenames = []
-    test_dir = 'output_faces'
+    test_dir = 'static/output_faces'
 
     for image_file in os.listdir(test_dir):
         image_path = os.path.join(test_dir, image_file)
