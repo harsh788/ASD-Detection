@@ -1,15 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>File Upload</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            padding: 20px; /* Add some padding to move form away from the edge */
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .custom-file {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <form action="/uploader" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" />
-        <input type="submit" value="Upload" />
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" name="fileToUpload" id="fileToUpload">
+            <label class="custom-file-label" for="fileToUpload">Choose file</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload File</button>
     </form>
-    {{ message }}
+
+    <script>
+        document.getElementById('fileToUpload').addEventListener('change', function(e) {
+            var fileName = e.target.files[0].name;
+            var nextSibling = e.target.nextElementSibling
+            nextSibling.innerText = fileName
+        })
+    </script>
 </body>
 </html>
