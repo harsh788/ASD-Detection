@@ -5,11 +5,17 @@ import numpy as np
 import pandas as pd
 import cv2
 import os
+import tensorflow as tf
+from keras.preprocessing.image import load_img, img_to_array
 
 cred = credentials.Certificate("reasd532006-c2f0bf0ed2a9.json")
 firebase_admin.initialize_app(cred,{'storageBucket': 'reasd532006.appspot.com'}) # connecting to firebase
 
 app = Flask(__name__)
+
+# Load the pre-trained face detector model and the ASD model
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+model = tf.keras.models.load_model("base_model.keras")
 
 @app.route('/')
 def index():
@@ -30,11 +36,16 @@ def upload():
         )
 
         detect_and_save_faces_in_video(f.filename, 'output_faces')
+        test_data, test_filenames = preprocess()
+        images = predict(test_data, test_filenames)
+        print(images)
+
+        # Saving the images to the firebase storage
+        for image in images:
+            blob = bucket.blob(image)
+            blob.upload_from_filename(f"output_faces/{image}")
 
         return render_template('index.html', message='File uploaded successfully')
-
-# Load the pre-trained face detector
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 def detect_and_save_faces_in_video(video_path, output_dir):
     # Open the video file
@@ -65,12 +76,44 @@ def detect_and_save_faces_in_video(video_path, output_dir):
             faces_detected += 1
 
         frame_count += 1
+        if frame_count == 200:
+            break
 
     # Release the VideoCapture object
     cap.release()
 
     print("Total frames processed:", frame_count)
     print("Total faces detected:", faces_detected)
+
+# Load and preprocess test data
+def preprocess():
+    test_data = []
+    test_filenames = []
+    test_dir = 'output_faces'
+
+    for image_file in os.listdir(test_dir):
+        image_path = os.path.join(test_dir, image_file)
+        img = load_img(image_path, target_size=(224, 224))  # ResNet50 input size
+        img_array = img_to_array(img)
+        img_array = img_array / 255.0  # Normalize pixel values
+        test_data.append(img_array)
+        test_filenames.append(image_file)
+
+    test_data = np.array(test_data)
+    print("Preprocessing complete")
+    return test_data, test_filenames
+
+def predict(test_data, test_filenames):
+    predictions = model.predict(test_data)
+    print("Predictions complete")
+
+    images = []
+    for i in range(len(predictions)):
+        if predictions[i] >= 0.5:
+            images.append(test_filenames[i])
+
+    return images
+
 
 if __name__ == '__main__':
     app.run(debug=True)
