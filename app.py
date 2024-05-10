@@ -82,8 +82,6 @@ def detect_and_save_faces_in_video(video_path, output_dir):
             faces_detected += 1
 
         frame_count += 1
-        if frame_count == 200:
-            break
 
     # Release the VideoCapture object
     cap.release()
