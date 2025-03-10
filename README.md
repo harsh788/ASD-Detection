@@ -18,4 +18,4 @@ We obtained a comprehensive dataset of facial images from publicly available sou
 - ASD Classification: The detected faces are then passed through the trained ASD detection model. This model assigns a probability score to each face, indicating the likelihood of ASD. 
 - Visualization: Faces with a high probability of ASD are highlighted or displayed, providing a visual cue to potential areas of concern.
 
-
+something
