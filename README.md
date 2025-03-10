@@ -10,7 +10,7 @@ Our project focuses on utilizing machine learning techniques for the automated d
 
 
 ### Dataset 
-We obtained a comprehensive dataset of facial images from publicly available sources such as Kaggle. This dataset contains images of individuals with and without ASD, providing a diverse range of facial expressions and characteristics.
+We obtained a comprehensive dataset of facial images from publicly available sources such as Kaggle. This dataset contains images of individuals with and without ASD, providing a  range of facial expressions and characteristics.
 
 
 ### Pipeline
