@@ -3,6 +3,7 @@
 ### Team Members
 - Harsh Shah
 - Anwit Damale
+- John Doe
 
 
 ### About
