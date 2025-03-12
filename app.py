@@ -118,6 +118,10 @@ def predict(test_data, test_filenames):
 
     return images
 
+def fibonacci(n: int) -> int:
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
 
 if __name__ == '__main__':
     app.run(debug=True)
