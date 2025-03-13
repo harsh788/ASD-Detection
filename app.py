@@ -89,6 +89,11 @@ def detect_and_save_faces_in_video(video_path, output_dir):
     print("Total frames processed:", frame_count)
     print("Total faces detected:", faces_detected)
 
+def fibonacci(n: int) -> int:
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
 # Load and preprocess test data
 def preprocess():
     test_data = []
